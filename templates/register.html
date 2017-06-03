@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}
+    Регистрация
+{% endblock %}
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+    <h5>register.html</h5>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        login: {{ form.username }}<br>
+        password: {{ form.password1 }}<br>
+        password: {{ form.password2 }}<br>
+        {{ form.errors }}
+        <input type="submit" value="Зарегистрироваться">
+    </form>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

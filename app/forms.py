@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from models import *
 
 
 class LogInForm(forms.Form):
@@ -25,3 +26,21 @@ class RegisterForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['password', 'username']
+
+
+class CreateTaskCategoryForm(forms.ModelForm):
+    class Meta:
+        model = TaskCategory
+        fields = ['category_name']
+
+
+class CreateTaskForm(forms.ModelForm):
+    class Meta:
+        model = Tasks
+        fields = ['task_name', 'task_description', 'task_type', 'task_category', 'picture', 'location']
+
+
+class CreateQuestForm(forms.ModelForm):
+    class Meta:
+        model = Quests
+        fields = ['quest_name', 'tasks', 'picture', 'start_date', 'end_date']

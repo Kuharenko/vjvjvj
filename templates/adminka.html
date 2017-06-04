@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}ADMINKA{% endblock %}
+{% block body %}
+
+        {% if tasks %}
+        <div class="quest">
+            <h2>Квесты <a href="{% url 'create-quest' %}">+</a></h2>
+            {% for quest in quests %}
+                <p>{{ quest.quest_name }} <a href="{% url 'delete-quest' id=quest.id %}">-</a></p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="task">
+            <h2>Задания <a href="{% url 'create-task' %}">+</a></h2>
+            {% for task in tasks %}
+                <div>
+                    <p>{{ task.task_name }} <a href="{% url 'delete-task' id=task.id %}">-</a></p>
+                </div>
+
+            {% endfor %}
+        </div>
+
+{% endblock %}

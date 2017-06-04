@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 FACEBOOK_APP_ID=str('118676945383583')
-FACEBOOK_APP_SECRET   = str('f6680aea40322b68e7053955f17fb1b8')
+FACEBOOK_APP_SECRET = str('f6680aea40322b68e7053955f17fb1b8')
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -93,9 +93,9 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Kiev'
 
 USE_I18N = True
 

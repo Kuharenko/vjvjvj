@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Пост{% endblock %}
+{% block body %}<h5>post.html</h5>
+    <p>{{ message }}</p>
+    <form id="images" method="post" action="" enctype="multipart/form-data">
+
+    {% csrf_token %}
+    <input type="file" name="pictures" id="pictures" multiple>
+
+    <input type="submit" name="submit" value="Submit" />
+</form>
+
+{% endblock %}
+
+https://github.com/Kuharenko/vjvjvj.git

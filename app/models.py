@@ -21,7 +21,7 @@ class Tasks(models.Model):
     task_description = models.CharField(max_length=100)
     task_type = models.CharField(max_length=1, choices=TASK_TYPE, default='2')
     task_category = models.ManyToManyField(TaskCategory)
-    picture = models.ImageField(upload_to='images', null=True, blank=True)
+    picture = models.ImageField(upload_to='images',null=True, blank=True)
     location = models.CharField(max_length=100)
 
     def __unicode__(self):

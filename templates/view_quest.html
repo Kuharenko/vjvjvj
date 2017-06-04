@@ -8,6 +8,15 @@
 
 {% block body %}
     <h1>{{ quest.quest_name }}</h1>
+    <h2>Задания</h2>
+
+    {% for foo in quest.tasks.all %}
+        <p><a href="{% url 'home'%}">{{ foo }}</a></p>
+    {% endfor %}
+
+    
+
+
 {% endblock %}
 
 {% block scripts %}

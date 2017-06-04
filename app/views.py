@@ -157,9 +157,13 @@ def delete_category(request, id):
 
 
 def view_quest(request, id):
-    quest = Quests.objects.get(id=id)
+    quest = Quests.objects.get(pk=id)
     return render(request, 'view_quest.html', {'quest': quest})
 
+
+def view_task(request, id):
+    task = Tasks.objects.get(pk=id)
+    return render(request, 'view_quest.html', {'task': task})
 
 
 

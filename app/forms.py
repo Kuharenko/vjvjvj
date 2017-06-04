@@ -34,13 +34,47 @@ class CreateTaskCategoryForm(forms.ModelForm):
         fields = ['category_name']
 
 
-class CreateTaskForm(forms.ModelForm):
+class CreateTaskImageForm(forms.ModelForm):
     class Meta:
-        model = Tasks
-        fields = ['task_name', 'task_description', 'task_type', 'task_category', 'picture', 'location']
+        model = TaskUploadImage
+        fields = ['task_name', 'task_description','task_question' ,'task_type', 'task_category', 'picture',
+                  'user_image']
 
 
 class CreateQuestForm(forms.ModelForm):
     class Meta:
         model = Quests
-        fields = ['quest_name', 'tasks', 'picture', 'start_date', 'end_date']
+        fields = ['quest_name', 'tasks_checkin', 'tasks_choice','tasks_image','quest_description', 'picture',
+                  'start_date', 'end_date']
+
+
+class CreateTaskCheckInForm(forms.ModelForm):
+    class Meta:
+        model = TaskCheckIn
+        fields = ['task_name', 'task_description','task_question' ,'task_type', 'task_category', 'picture',
+                  'task_location']
+
+
+class CreateTaskChoiceForm(forms.ModelForm):
+    class Meta:
+        model = TaskChoiceRightVariant
+        fields = ['task_name', 'task_description','task_question',
+                  'task_variant1', 'task_variant2', 'task_variant3', 'task_variant4', 'task_variant_right',
+                  'task_type', 'task_category', 'picture']
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -102,9 +102,12 @@ def image_upload(request):
 @user_passes_test(lambda u: u.is_superuser, login_url='/login/')
 def adminka(request):
     quests = Quests.objects.all()
-    tasks = Tasks.objects.all()
+    tasks_upload = TaskUploadImage.objects.all()
+    tasks_checkin = TaskCheckIn.objects.all()
+    tasks_choice = TaskChoiceRightVariant.objects.all()
 
-    return render(request, 'adminka.html', {'quests': quests, 'tasks': tasks})
+    return render(request, 'adminka.html', {'quests': quests, 'tasks1': tasks_upload,
+                                            'tasks2':tasks_checkin, 'tasks3':tasks_choice })
 
 
 @user_passes_test(lambda u: u.is_superuser, login_url='/login/')
@@ -120,8 +123,32 @@ def create_quest(request):
 
 
 @user_passes_test(lambda u: u.is_superuser, login_url='/login/')
-def create_tasks(request):
-    form = CreateTaskForm(request.POST or None, request.FILES or None)
+def create_choice_task(request):
+    form = CreateTaskChoiceForm(request.POST or None, request.FILES or None)
+    if request.POST:
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.save()
+            form.save_m2m()
+            return render(request, 'create_quest.html', {'form': form, 'message': 'Succes'})
+    return render(request, 'create_quest.html', {'form': form, 'message': ''})
+
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/login/')
+def create_checkin_task(request):
+    form = CreateTaskCheckInForm(request.POST or None, request.FILES or None)
+    if request.POST:
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.save()
+            form.save_m2m()
+            return render(request, 'create_quest.html', {'form': form, 'message': 'Succes'})
+    return render(request, 'create_quest.html', {'form': form, 'message': ''})
+
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/login/')
+def create_image_task(request):
+    form = CreateTaskImageForm(request.POST or None, request.FILES or None)
     if request.POST:
         if form.is_valid():
             task = form.save(commit=False)
@@ -157,23 +184,31 @@ def edit_quest(request, id):
 
 
 @user_passes_test(lambda u: u.is_superuser, login_url='/login/')
-def edit_task(request, id):
-    task = Tasks.objects.get(id=id)
-    form = CreateTaskForm(instance=task)
+def edit_task(request, id, type):
+    if type == 0:
+        task = TaskUploadImage.objects.get(pk=id)
+        form = CreateTaskImageForm(instance=task)
+    elif type == 1:
+        task = TaskCheckIn.objects.get(pk=id)
+        form = CreateTaskCheckInForm(instance=task)
+    else:
+        task = TaskChoiceRightVariant.objects.get(pk=id)
+        form = CreateTaskChoiceForm(instance=task)
+
     if request.POST:
-        form = CreateTaskForm(request.POST, request.FILES, instance=task)
+        if type == 0:
+            form = CreateTaskImageForm(request.POST, request.FILES, instance=task)
+        elif type == 1:
+            form = CreateTaskCheckInForm(request.POST, request.FILES, instance=task)
+        else:
+            form = CreateTaskChoiceForm(request.POST, request.FILES, instance=task)
+
         if form.is_valid():
             task = form.save(commit=False)
             task.save()
-            form.save_m2m()
+            #form.save_m2m()
             return render(request, 'create_quest.html', {'form': form, 'message': 'Succes'})
     return render(request, 'create_quest.html', {'form': form, 'message': ''})
-
-
-@user_passes_test(lambda u: u.is_superuser, login_url='/login/')
-def delete_task(request, id):
-    Tasks.objects.get(id=id).delete()
-    return redirect('/adminka/')
 
 
 @user_passes_test(lambda u: u.is_superuser, login_url='/login/')
@@ -193,12 +228,35 @@ def view_quest(request, id):
     return render(request, 'view_quest.html', {'quest': quest})
 
 
-def view_task(request, id):
-    task = Tasks.objects.get(pk=id)
+def view_task_choice(request, id):
+    task = TaskChoiceRightVariant.objects.get(id=id)
+    print task
     return render(request, 'view_task.html', {'task': task})
 
 
+def view_task_checkin(request, id):
+    task = TaskCheckIn.objects.get(id=id)
+    return render(request, 'view_task.html', {'task': task})
 
 
+def view_task_image(request, id):
+    task = TaskUploadImage.objects.get(id=id)
+    return render(request, 'view_task.html', {'task': task})
 
 
+@user_passes_test(lambda u: u.is_superuser, login_url='/login/')
+def delete_task_image(request, id):
+    TaskUploadImage.objects.get(pk=id).delete()
+    return redirect('/adminka/')
+
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/login/')
+def delete_task_choice(request, id):
+    TaskChoiceRightVariant.objects.get(pk=id).delete()
+    return redirect('/adminka/')
+
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/login/')
+def delete_task_checkin(request, id):
+    TaskCheckIn.objects.get(pk=id).delete()
+    return redirect('/adminka/')

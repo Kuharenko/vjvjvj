@@ -8,13 +8,16 @@
 
 {% block body %}
     <h1>{{ quest.quest_name }}</h1>
+    <h4>Описание: {{ quest.quest_description }}</h4>
     <h2>Задания</h2>
 
-    {% for foo in quest.tasks.all %}
-        <p><a href="{% url 'home'%}">{{ foo }}</a></p>
+    {% for task in quest.tasks.all %}
+        <p><a href="{% url 'task' id=task.id %}">{{ task }}</a></p>
     {% endfor %}
 
-    
+    <img src="{{ MEDIA_URL }}{{ quest.picture }}" alt="">
+    <p>Дата начала квеста: <b>{{ quest.start_date }}</b></p>
+    <p>Дата окончания квеста: <b>{{ quest.end_date }}</b></p>
 
 
 {% endblock %}

@@ -30,6 +30,7 @@ class Tasks(models.Model):
 
 class Quests(models.Model):
     quest_name = models.CharField(max_length=100)
+    quest_description = models.CharField(max_length=10000)
     tasks = models.ManyToManyField(Tasks)
     picture = models.ImageField(upload_to='images', null=True, blank=True)
     start_date = models.DateTimeField(default=datetime.now, blank=True)

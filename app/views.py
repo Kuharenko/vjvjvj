@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.contrib.auth import logout, login, authenticate
+from django.contrib.auth.decorators import login_required
 
 from app.forms import *
 from app.models import *
@@ -23,6 +24,7 @@ def home(request):
     return render(request, 'home.html', {'quests': quests})
 
 
+@login_required()
 def log_out(request):
     logout(request)
     return HttpResponseRedirect('/')
@@ -112,6 +114,7 @@ def create_quest(request):
         if form.is_valid():
             task = form.save(commit=False)
             task.save()
+            form.save_m2m()
             return render(request, 'create_quest.html', {'form': form, 'message': 'Succes'})
     return render(request, 'create_quest.html', {'form': form, 'message': ''})
 
@@ -123,6 +126,7 @@ def create_tasks(request):
         if form.is_valid():
             task = form.save(commit=False)
             task.save()
+            form.save_m2m()
             return render(request, 'create_quest.html', {'form': form, 'message': 'Succes'})
     return render(request, 'create_quest.html', {'form': form, 'message': ''})
 
@@ -134,6 +138,34 @@ def create_tasks_category(request):
         if form.is_valid():
             task = form.save(commit=False)
             task.save()
+            return render(request, 'create_quest.html', {'form': form, 'message': 'Succes'})
+    return render(request, 'create_quest.html', {'form': form, 'message': ''})
+
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/login/')
+def edit_quest(request, id):
+    quest = Quests.objects.get(id=id)
+    form = CreateQuestForm(instance=quest)
+    if request.POST:
+        form = CreateQuestForm(request.POST, request.FILES, instance=quest)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.save()
+            form.save_m2m()
+            return render(request, 'create_quest.html', {'form': form, 'message': 'Succes'})
+    return render(request, 'create_quest.html', {'form': form, 'message': ''})
+
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/login/')
+def edit_task(request, id):
+    task = Tasks.objects.get(id=id)
+    form = CreateTaskForm(instance=task)
+    if request.POST:
+        form = CreateTaskForm(request.POST, request.FILES, instance=task)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.save()
+            form.save_m2m()
             return render(request, 'create_quest.html', {'form': form, 'message': 'Succes'})
     return render(request, 'create_quest.html', {'form': form, 'message': ''})
 
@@ -163,8 +195,7 @@ def view_quest(request, id):
 
 def view_task(request, id):
     task = Tasks.objects.get(pk=id)
-    return render(request, 'view_quest.html', {'task': task})
-
+    return render(request, 'view_task.html', {'task': task})
 
 
 

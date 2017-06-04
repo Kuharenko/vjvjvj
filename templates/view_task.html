@@ -8,11 +8,16 @@
 
 {% block body %}
     <h1>{{ task.quest_name }}</h1>
+    <img src="{{ task.picture }}" alt="">
+    <p>Категория:
+    {% for cat in task.task_category.all %}
+        {{ cat }}
+    {% endfor %}
+</p>
+    <p>Тип: {{ task.get_task_type_display }}</p>
     <h2>Описание</h2>
-
-    
-
-
+    <p>{{ task.task_description }}</p>
+    <p>Местоположение: {{ task.location }}</p>
 {% endblock %}
 
 {% block scripts %}

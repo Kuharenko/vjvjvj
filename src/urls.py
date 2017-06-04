@@ -32,5 +32,8 @@ urlpatterns = [
     url(r'^adminka/delete/task/(?P<id>[0-9]+)$', my_views.delete_task, name="delete-task"),
     url(r'^adminka/delete/quest/(?P<id>[0-9]+)$', my_views.delete_quest, name="delete-quest"),
     url(r'^adminka/delete/category/(?P<id>[0-9]+)$', my_views.delete_category, name="delete-category"),
+    url(r'^adminka/edit/task/(?P<id>[0-9]+)$', my_views.edit_task, name="edit-task"),
+    url(r'^adminka/edit/quest/(?P<id>[0-9]+)$', my_views.edit_quest, name="edit-quest"),
     url(r'quest/(?P<id>[0-9]+)$', my_views.view_quest, name='quest'),
+    url(r'task/(?P<id>[0-9]+)$', my_views.view_task, name='task'),
 ]

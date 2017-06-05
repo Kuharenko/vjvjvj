@@ -1,3 +1,4 @@
+
 {% extends 'base.html' %}
 {% block title %}ADMINKA{% endblock %}
 {% block body %}<h5>adminka.html</h5>
@@ -7,7 +8,7 @@
         <div class="quest">
             <h2>Квесты <a href="{% url 'create-quest' %}">+</a></h2>
             {% for quest in quests %}
-                <p>{{ quest.quest_name }} <a href="{% url 'delete-quest' id=quest.id %}">-</a></p>
+                <p><a href="{% url 'edit-quest' id=quest.id %}">{{ quest.quest_name }}</a> <a href="{% url 'delete-quest' id=quest.id %}">-</a></p>
             {% endfor %}
         </div>
     {% endif %}
@@ -21,7 +22,7 @@
         {% for task in tasks1 %}
             <div>
                 <p>
-                    <a href="{% url 'view-image-task' id=task.id %}">{{ task.task_name }}</a>
+                    <a href="{% url 'edit-image-task' id=task.id %}">{{ task.task_name }}</a>
                     <a href="{% url 'delete-image-task' id=task.id %}"> - </a>
                 </p>
             </div>
@@ -30,7 +31,7 @@
     {% for task in tasks2 %}
             <div>
                 <p>
-                    <a href="{% url 'view-choice-task' id=task.id %}">{{ task.task_name }}</a>
+                    <a href="{% url 'edit-choice-task' id=task.id %}">{{ task.task_name }}</a>
                     <a href="{% url 'delete-choice-task' id=task.id %}"> - </a>
                 </p>
             </div>
@@ -39,7 +40,7 @@
     {% for task in tasks3 %}
             <div>
                 <p>
-                    <a href="{% url 'view-checkin-task' id=task.id %}">{{ task.task_name }}</a>
+                    <a href="{% url 'edit-checkin-task' id=task.id %}">{{ task.task_name }}</a>
                     <a href="{% url 'delete-checkin-task' id=task.id %}"> - </a>
                 </p>
             </div>
@@ -47,5 +48,9 @@
 
 
     </div>
+
+{% endblock %}
+
+{% block scripts %}
 
 {% endblock %}

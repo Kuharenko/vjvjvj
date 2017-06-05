@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from datetime import datetime
+from django.contrib.auth.models import User
 # Create your models here.
 
 
@@ -67,3 +68,72 @@ class Quests(models.Model):
     def __unicode__(self):
         return self.quest_name
 
+
+class ResultForUserImageTask(models.Model):
+    STATUS = (
+        ('0','IN PROCESS'),
+        ('1','COMPLETED'),
+    )
+    task_id = models.ForeignKey(TaskUploadImage)
+    user = models.ForeignKey(User)
+    quest = models.ForeignKey(Quests)
+    user_answer = models.ImageField(upload_to='static/media/images', null=True, blank=True)
+    date_complete = models.DateTimeField(default=datetime.now, blank=True)
+    status = models.CharField(max_length='1', choices=STATUS)
+
+    def __unicode__(self):
+        return str(self.id)
+
+
+class ResultForUserChoicesTask(models.Model):
+    STATUS = (
+        ('0','IN PROCESS'),
+        ('1','COMPLETED'),
+    )
+    task_id = models.ForeignKey(TaskChoiceRightVariant)
+    user = models.ForeignKey(User)
+    quest = models.ForeignKey(Quests)
+    user_answer = models.CharField(max_length=100)
+    date_complete = models.DateTimeField(default=datetime.now, blank=True)
+    status = models.CharField(max_length='1', choices=STATUS)
+
+    def __unicode__(self):
+        return str(self.id)
+
+
+class ResultForUserCheckinTask(models.Model):
+    STATUS = (
+        ('0','IN PROCESS'),
+        ('1','COMPLETED'),
+    )
+    task_id = models.ForeignKey(TaskCheckIn)
+    quest = models.ForeignKey(Quests)
+    user = models.ForeignKey(User)
+    user_answer = models.CharField(max_length=100)
+    date_complete = models.DateTimeField(default=datetime.now, blank=True)
+    status = models.CharField(max_length='1', choices=STATUS)
+
+    def __unicode__(self):
+        return str(self.id)
+
+
+class ResultQuestByUser(models.Model):
+    STATUS = (
+        ('0', 'IN PROCESS'),
+        ('1', 'COMPLETED'),
+    )
+    quest = models.ForeignKey(Quests)
+    user = models.ForeignKey(User)
+    date_complete = models.DateTimeField(default=datetime.now, blank=True)
+    status = models.CharField(max_length='1', choices=STATUS)
+
+    def __unicode__(self):
+        return str(self.id)
+
+
+class QuestForUser(models.Model):
+    user = models.ForeignKey(User)
+    quest = models.ManyToManyField(Quests, blank=True)
+
+    def __unicode__(self):
+        return str(self.id)

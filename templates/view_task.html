@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+
 {% block title %}
     {{ task.task_name }}
 {% endblock %}
@@ -8,7 +9,9 @@
 
 {% block body %}
     <h1>{{ task.quest_name }}</h1>
-    <img src="{{ task.picture }}" alt="">
+    {% if task.picture.url %}
+        <img src="{{ MEDIA_URL }}{{ task.picture.url }}" alt="" width="200px">
+    {% endif %}
     <p>Категория:
     {% for cat in task.task_category.all %}
         {{ cat }}
@@ -16,9 +19,91 @@
 </p>
     <h2>Описание</h2>
     <p>{{ task.task_description }}</p>
+
+    {% if task.location %}
     <p>Местоположение: {{ task.location }}</p>
+    {% endif %}
+    {% if accepted.status == '1' %}
+        <h1>Выполнено</h1>
+    {% elif accepted.status == '0' %}
+        {% if task.task_type == '0' %}
+
+            <form action="{% url 'finish' task_id=task.id task_type=task.task_type q_id=quest.id %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+                <input type="file" name="img">
+                <br>
+                <button id="finish" type="submit">Завершить</button>
+            </form>
+        {% endif %}
+        {% if task.task_type == '1' %}
+
+            <form action="{% url 'finish' task_id=task.id task_type=task.task_type q_id=quest.id %}" method="post">
+            {% csrf_token %}
+                <input type="hidden" name="location" value="123">
+                <br>
+                <button id="finish" type="submit">Завершить</button>
+            </form>
+        {% endif %}
+        {% if task.task_type == '2' %}
+
+            <form action="{% url 'finish' task_id=task.id task_type=task.task_type q_id=quest.id %}" method="post">
+            {% csrf_token %}
+                <input type="radio" name="choice" value="{{ task.task_variant1 }}">
+                <br>
+                <input type="radio" name="choice"  value="{{ task.task_variant2 }}">
+                <br>
+                <input type="radio" name="choice" value="{{ task.task_variant3 }}">
+                <br>
+                <input type="radio" name="choice" value="{{ task.task_variant4 }}">
+                <br>
+                <button id="finish" type="submit">Завершить</button>
+            </form>
+        {% endif %}
+
+        <h1 id="completed" style="display: none;">Выполнено</h1>
+    {% else %}
+
+{#        {% for foo in quest %}#}
+{#            {% for bar in foo.tasks_choice.all %}#}
+{##}
+{#                {{ bar.id }}#}
+{##}
+{#            {% endfor %}#}
+{#        {% endfor %}#}
+
+        <button id="start">Начать выполнение</button>
+        <button id="finish" style="display: none;">Завершить</button>
+        <h1 id="completed" style="display: none;">Выполнено</h1>
+    {% endif %}
+
+
+
 {% endblock %}
 
 {% block scripts %}
+    <script>
+        $('#start').click(function () {
+            $.ajax({
+                url:"{% url 'start' task_id=task.id task_type=task.task_type q_id=quest.id %}",
+                }
+            ).done(function () {
+                location.reload();
+            }).fail(function () {
+                alert('403');
+            })
+        });
 
+        /*$('#finish').click(function () {
+            $.ajax({
+                url:"{% url 'finish' task_id=task.id task_type=task.task_type q_id=quest.id %}",
+                }
+            ).done(function () {
+                alert('OK');
+                $("#finish").hide();
+                $("#completed").show();
+            }).fail(function () {
+                alert('403');
+            })
+        });*/
+    </script>
 {% endblock %}

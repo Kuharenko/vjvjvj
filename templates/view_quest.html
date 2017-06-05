@@ -15,15 +15,15 @@
     <h2>Задания</h2>
 
     {% for task in quest.tasks_choice.all %}
-        <p><a href="{% url 'view-choice-task' id=task.id  %}">{{ task }}</a></p>
+        <p><a href="{% url 'view-choice-task' id=task.id q_id=quest.id %}">{{ task }}</a></p>
     {% endfor %}
 
     {% for task in quest.tasks_checkin.all %}
-        <p><a href="{% url 'view-checkin-task' id=task.id  %}">{{ task }}</a></p>
+        <p><a href="{% url 'view-checkin-task' id=task.id q_id=quest.id  %}">{{ task }}</a></p>
     {% endfor %}
 
     {% for task in quest.tasks_image.all %}
-        <p><a href="{% url 'view-image-task' id=task.id  %}">{{ task }}</a></p>
+        <p><a href="{% url 'view-image-task' id=task.id q_id=quest.id %}">{{ task }}</a></p>
     {% endfor %}
 
 

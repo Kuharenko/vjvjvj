@@ -1,16 +1,22 @@
 {% extends 'base.html' %}
 {% block title %}HOME{% endblock %}
-{% block body %}<h5>home.html</h5>
+{% block body %}
     {% if request.user.is_authenticated %}
-        <h4>Теперь ты можешь сделать какую-нибудь пакость! <a href="{% url 'post'%}">Например отправить себе пост</a></h4>
 
+        </h4>
         <div class="quest">
             <h2>Квесты</h2>
-            {% for quest in quests %}
+            {% for  quest in quests %}
+                {% if completed %}
+                {% for  complet in completed %}
+                    {% if quest.id == complet.quest.id %}
+                        <p>{{ quest.quest_name }} - Выполнен</p>
+                    {% endif %}
+                {% endfor %}
+                {% else %}
                 <p><a href="{% url 'quest' id=quest.id %}">{{ quest.quest_name }}</a></p>
+                {% endif %}
             {% endfor %}
         </div>
-
     {% endif %}
-
 {% endblock %}

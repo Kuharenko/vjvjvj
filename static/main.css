@@ -13,3 +13,30 @@ body{
     padding: 10px;
     margin: 5px;
 }
+
+#map {
+    height: 500px;
+}
+
+.form-task > * {
+    margin-top: 15px;
+}
+
+.hidden {
+    display: none;
+}
+
+.danger {
+    color: #d85030!important;
+}
+
+.success {
+    color: #659f13!important;
+}
+
+.image-remove {
+    position: relative;
+    left: -35px;
+    top: -30px;
+    font-size: 25pt;
+}

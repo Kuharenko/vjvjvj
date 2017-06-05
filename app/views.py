@@ -1,6 +1,9 @@
-from django.shortcuts import render, redirect, HttpResponseRedirect
+from django.shortcuts import render, redirect, HttpResponseRedirect, HttpResponse, render_to_response, RequestContext
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.decorators import login_required
+
+from django.views.decorators.csrf import csrf_exempt
+
 
 from app.forms import *
 from app.models import *
@@ -21,6 +24,9 @@ from django.contrib.auth.decorators import user_passes_test
 
 def home(request):
     quests = Quests.objects.all()
+    if request.user.is_authenticated():
+        completed = ResultQuestByUser.objects.filter(user=User.objects.get(id=request.user.id)).all()
+        return render(request, 'home.html', {'quests': quests, 'completed': completed})
     return render(request, 'home.html', {'quests': quests})
 
 
@@ -146,10 +152,53 @@ def create_checkin_task(request):
     return render(request, 'create_quest.html', {'form': form, 'message': ''})
 
 
+@csrf_exempt
 @user_passes_test(lambda u: u.is_superuser, login_url='/login/')
 def create_image_task(request):
     form = CreateTaskImageForm(request.POST or None, request.FILES or None)
     if request.POST:
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.save()
+            form.save_m2m()
+            return render(request, 'create_quest.html', {'form': form, 'message': 'Succes'})
+    return render(request, 'create_quest.html', {'form': form, 'message': ''})
+
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/login/')
+def edit_image_task(request, id):
+    task = TaskUploadImage.objects.get(pk=id)
+    form = CreateTaskImageForm(instance=task)
+    if request.POST:
+        form = CreateTaskImageForm(request.POST, request.FILES, instance=task)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.save()
+            form.save_m2m()
+            return render(request, 'create_quest.html', {'form': form, 'message': 'Succes'})
+    return render(request, 'create_quest.html', {'form': form, 'message': ''})
+
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/login/')
+def edit_choice_task(request, id):
+    task = TaskChoiceRightVariant.objects.get(pk=id)
+    form = CreateTaskChoiceForm(instance=task)
+    if request.POST:
+        form = CreateTaskChoiceForm(request.POST, request.FILES, instance=task)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.save()
+            form.save_m2m()
+            return render(request, 'create_quest.html', {'form': form, 'message': 'Succes'})
+    return render(request, 'create_quest.html', {'form': form, 'message': ''})
+
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/login/')
+def edit_checkin_task(request, id):
+    task = TaskCheckIn.objects.get(pk=id)
+    form = CreateTaskCheckInForm(instance=task)
+    if request.POST:
+        form = CreateTaskCheckInForm(request.POST, request.FILES, instance=task)
         if form.is_valid():
             task = form.save(commit=False)
             task.save()
@@ -207,6 +256,7 @@ def edit_task(request, id, type):
             task = form.save(commit=False)
             task.save()
             #form.save_m2m()
+
             return render(request, 'create_quest.html', {'form': form, 'message': 'Succes'})
     return render(request, 'create_quest.html', {'form': form, 'message': ''})
 
@@ -228,20 +278,37 @@ def view_quest(request, id):
     return render(request, 'view_quest.html', {'quest': quest})
 
 
-def view_task_choice(request, id):
+def view_task_choice(request, id, q_id):
     task = TaskChoiceRightVariant.objects.get(id=id)
-    print task
-    return render(request, 'view_task.html', {'task': task})
+    user = User.objects.get(id=request.user.id)
+    quest = Quests.objects.get(id=q_id)
+    try:
+        accepted = ResultForUserChoicesTask.objects.get(task_id=task, user=user)
+    except:
+        accepted = ''
+    return render(request, 'view_task.html', {'task': task, 'accepted': accepted, 'quest': quest})
 
 
-def view_task_checkin(request, id):
+def view_task_checkin(request, id, q_id):
     task = TaskCheckIn.objects.get(id=id)
-    return render(request, 'view_task.html', {'task': task})
+    user = User.objects.get(id=request.user.id)
+    quest = Quests.objects.get(id=q_id)
+    try:
+        accepted = ResultForUserCheckinTask.objects.get(task_id=task, user=user)
+    except:
+        accepted = ''
+    return render(request, 'view_task.html', {'task': task, 'accepted': accepted, 'quest': quest})
 
 
-def view_task_image(request, id):
+def view_task_image(request, id, q_id):
     task = TaskUploadImage.objects.get(id=id)
-    return render(request, 'view_task.html', {'task': task})
+    user = User.objects.get(id=request.user.id)
+    quest = Quests.objects.get(id=q_id)
+    try:
+        accepted = ResultForUserImageTask.objects.get(task_id=task, user=user)
+    except:
+        accepted = ''
+    return render(request, 'view_task.html', {'task': task, 'accepted': accepted, 'quest': quest})
 
 
 @user_passes_test(lambda u: u.is_superuser, login_url='/login/')
@@ -260,3 +327,89 @@ def delete_task_choice(request, id):
 def delete_task_checkin(request, id):
     TaskCheckIn.objects.get(pk=id).delete()
     return redirect('/adminka/')
+
+
+@login_required()
+def start_task(request, task_id, task_type, q_id):
+    quest = Quests.objects.get(id=q_id)
+    user = User.objects.get(id=request.user.id)
+    if not ResultQuestByUser.objects.filter(quest=quest, user=user).exists():
+        rs = ResultQuestByUser(quest=quest, user=user, status='0')
+        rs.save()
+
+    if '0' in task_type:
+        id = TaskUploadImage.objects.get(id=task_id)
+        if not ResultForUserImageTask.objects.filter(task_id=id, quest=quest, user=user).exists():
+            task = ResultForUserImageTask(task_id=id, user=user, quest=quest, user_answer='', status='0')
+            task.save()
+            return HttpResponse(status=200)
+        return HttpResponse(status=400)
+    elif '1' in task_type:
+        id = TaskCheckIn.objects.get(id=task_id)
+        if not ResultForUserCheckinTask.objects.filter(task_id=id,quest=quest, user=user).exists():
+            task = ResultForUserCheckinTask(task_id=id, user=user,quest=quest, user_answer='', status='0')
+            task.save()
+            return HttpResponse(status=200)
+        return HttpResponse(status=400)
+    else:
+        id = TaskChoiceRightVariant.objects.get(id=task_id)
+        if not ResultForUserChoicesTask.objects.filter(task_id=id,quest=quest, user=user).exists():
+            task = ResultForUserChoicesTask(task_id=id, quest=quest, user=user, user_answer='', status='0')
+            task.save()
+            return HttpResponse(status=200)
+    return HttpResponse(status=400)
+
+
+@login_required()
+def finish_task(request, task_id, task_type, q_id):
+    user = User.objects.get(id=request.user.id)
+    quest = Quests.objects.get(id=q_id)
+
+    def z(quest, user):
+        choises = quest.tasks_choice.all().count()
+        images = quest.tasks_image.all().count()
+        checkin = quest.tasks_checkin.all().count()
+
+        u_choises = ResultForUserChoicesTask.objects.filter(quest=quest, user=user).count()
+        u_images = ResultForUserImageTask.objects.filter(quest=quest, user=user).count()
+        u_checkin = ResultForUserCheckinTask.objects.filter(quest=quest, user=user).count()
+
+        tasks_in_quest = choises + images + checkin
+        tasks_in_user_by_quest = u_choises+u_images+u_checkin
+
+        if tasks_in_quest == tasks_in_user_by_quest:
+                quest_by_user = ResultQuestByUser.objects.get(user=user, quest=quest)
+                quest_by_user.status ='1'
+                quest_by_user.save()
+
+    if '0' in task_type:
+        id = TaskUploadImage.objects.get(id=task_id)
+        if request.POST and request.FILES:
+            task = ResultForUserImageTask.objects.get(task_id=id, user=user)
+            task.user_answer = request.FILES.get('img')
+            task.status ='1'
+            task.save()
+            z(quest, user)
+            return redirect('/')
+    elif '1' in task_type:
+        id = TaskCheckIn.objects.get(id=task_id)
+        if request.POST:
+            task = ResultForUserCheckinTask.objects.get(task_id=id, user=user)
+            task.user_location = request.POST.get('location')
+            task.status ='1'
+            task.save()
+            z(quest, user)
+            return redirect('/')
+    else:
+        id = TaskChoiceRightVariant.objects.get(id=task_id)
+        right_variant = id.task_variant_right
+        if request.POST:
+            if right_variant == request.POST.get('choice'):
+                task = ResultForUserChoicesTask.objects.get(task_id=id, user=user)
+                task.status = '1'
+                task.user_answer = request.POST.get('choice')
+                task.save()
+                z(quest, user)
+                return redirect('/')
+    return HttpResponse(status=400)
+

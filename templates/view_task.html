@@ -9,7 +9,7 @@
 
 {% block body %}
     <h1>{{ task.quest_name }}</h1>
-    {% if task.picture.url %}
+    {% if task.picture %}
         <img src="{{ MEDIA_URL }}{{ task.picture.url }}" alt="" width="200px">
     {% endif %}
     <p>Категория:
@@ -30,33 +30,43 @@
 
             <form action="{% url 'finish' task_id=task.id task_type=task.task_type q_id=quest.id %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
+                {% if accepted.user_answer %}
+                   <img src="/{{ MEDIA_URL }}{{ accepted.user_answer }}" alt="" width="200px">
+                    <br>
+                {% endif %}
                 <input type="file" name="img">
                 <br>
-                <button id="finish" type="submit">Завершить</button>
+
+                <button id="finish" type="submit">Сохранить ответ</button>
             </form>
         {% endif %}
         {% if task.task_type == '1' %}
 
             <form action="{% url 'finish' task_id=task.id task_type=task.task_type q_id=quest.id %}" method="post">
             {% csrf_token %}
-                <input type="hidden" name="location" value="123">
+                <input type="hidden" name="location" value="48.504799, 32.262501">
                 <br>
-                <button id="finish" type="submit">Завершить</button>
+
+                <button id="finish" type="submit">Сохранить ответ</button>
             </form>
         {% endif %}
         {% if task.task_type == '2' %}
 
             <form action="{% url 'finish' task_id=task.id task_type=task.task_type q_id=quest.id %}" method="post">
             {% csrf_token %}
-                <input type="radio" name="choice" value="{{ task.task_variant1 }}">
+                <label for="">{{ task.task_variant1 }}</label>
+                <input type="radio" name="choice" value="{{ task.task_variant1 }}" {% if accepted.user_answer == task.task_variant1 %}checked{% endif %}>
                 <br>
-                <input type="radio" name="choice"  value="{{ task.task_variant2 }}">
+                <label for="">{{ task.task_variant2 }}</label>
+                <input type="radio" name="choice"  value="{{ task.task_variant2 }}" {% if accepted.user_answer == task.task_variant2 %}checked{% endif %}>
                 <br>
-                <input type="radio" name="choice" value="{{ task.task_variant3 }}">
+                <label for="">{{ task.task_variant3 }}</label>
+                <input type="radio" name="choice" value="{{ task.task_variant3 }}" {% if accepted.user_answer == task.task_variant3 %}checked{% endif %}>
                 <br>
-                <input type="radio" name="choice" value="{{ task.task_variant4 }}">
+                <label for="">{{ task.task_variant4 }}</label>
+                <input type="radio" name="choice" value="{{ task.task_variant4 }}" {% if accepted.user_answer == task.task_variant4 %}checked{% endif %}>
                 <br>
-                <button id="finish" type="submit">Завершить</button>
+                <button id="finish" type="submit">Сохранить ответ</button>
             </form>
         {% endif %}
 

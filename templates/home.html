@@ -7,16 +7,14 @@
         <div class="quest">
             <h2>Квесты</h2>
             {% for  quest in quests %}
-                {% if completed %}
-                {% for  complet in completed %}
-                    {% if quest.id == complet.quest.id %}
-                        <p>{{ quest.quest_name }} - Выполнен</p>
-                    {% endif %}
-                {% endfor %}
-                {% else %}
                 <p><a href="{% url 'quest' id=quest.id %}">{{ quest.quest_name }}</a></p>
-                {% endif %}
             {% endfor %}
+
+                {% if completed %}
+                    {% for  quest1 in completed.all %}
+                            <p><a href="{% url 'quest' id=quest1.quest.id %}">{{ quest1.quest.quest_name }}</a> - Выполнен</p>
+                    {% endfor %}
+                {% endif %}
         </div>
     {% endif %}
 {% endblock %}

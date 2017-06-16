@@ -12,4 +12,9 @@ admin.site.register(ResultForUserCheckinTask)
 admin.site.register(ResultForUserChoicesTask)
 admin.site.register(ResultForUserImageTask)
 admin.site.register(ResultQuestByUser)
+admin.site.register(ImageTaskModerate)
 
+
+admin.site.register(modelTwo)
+admin.site.register(modelOne)
+admin.site.register(modelOneTwo)

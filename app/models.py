@@ -73,6 +73,7 @@ class ResultForUserImageTask(models.Model):
     STATUS = (
         ('0','IN PROCESS'),
         ('1','COMPLETED'),
+        ('2', 'Moderating')
     )
     task_id = models.ForeignKey(TaskUploadImage)
     user = models.ForeignKey(User)
@@ -137,3 +138,36 @@ class QuestForUser(models.Model):
 
     def __unicode__(self):
         return str(self.id)
+
+
+class ImageTaskModerate(models.Model):
+    quest = models.ForeignKey(Quests)
+    task = models.ForeignKey(TaskUploadImage)
+    user = models.ForeignKey(User)
+    user_answer = models.ImageField(upload_to='static/media/images', null=True, blank=True)
+
+
+
+class modelOne(models.Model):
+    name = models.CharField(max_length=30)
+    status = models.CharField(max_length=1)
+
+    def __unicode__(self):
+        return self.name
+
+
+class modelTwo(models.Model):
+    name = models.CharField(max_length=30)
+    status = models.CharField(max_length=1)
+
+    def __unicode__(self):
+        return self.name
+
+
+class modelOneTwo(models.Model):
+    name = models.CharField(max_length=30)
+    model1 = models.ForeignKey(modelOne)
+    model2 = models.ForeignKey(modelTwo)
+
+    def __unicode__(self):
+        return self.name

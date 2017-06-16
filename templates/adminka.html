@@ -1,51 +1,33 @@
-
 {% extends 'base.html' %}
 {% block title %}ADMINKA{% endblock %}
-{% block body %}<h5>adminka.html</h5>
+{% block body %}
 
 
-    {% if tasks1 or tasks2 or tasks3 %}
+    {% if result %}
         <div class="quest">
             <h2>Квесты <a href="{% url 'create-quest' %}">+</a></h2>
             {% for quest in quests %}
-                <p><a href="{% url 'edit-quest' id=quest.id %}">{{ quest.quest_name }}</a> <a href="{% url 'delete-quest' id=quest.id %}">-</a></p>
+                <p><a href="{% url 'edit-quest' id=quest.id %}">{{ quest.quest_name }}</a> <a
+                        href="{% url 'delete-quest' id=quest.id %}">-</a></p>
             {% endfor %}
         </div>
     {% endif %}
     <div class="task">
         <h2>Задания
-                            <a href="{% url 'create-image-task' %}">+ Картинка</a>
-            <a href="{% url 'create-choice-task' %}">+ Выбор</a>
-            <a href="{% url 'create-checkin-task' %}">+ Check In</a>
+            <a href="{% url 'create-task' task_type='0' %}">+ Картинка</a>
+            <a href="{% url 'create-task' task_type='2'%}">+ Выбор</a>
+            <a href="{% url 'create-task' task_type='1' %}">+ Check In</a>
         </h2>
 
-        {% for task in tasks1 %}
+        {% for task in result %}
             <div>
                 <p>
-                    <a href="{% url 'edit-image-task' id=task.id %}">{{ task.task_name }}</a>
-                    <a href="{% url 'delete-image-task' id=task.id %}"> - </a>
+                    <a href="{% url 'edit-task' id=task.id task_type=task.task_type %}">{{ task.task_name }}</a>
+                    <a href="{% url 'delete-task' id=task.id task_type=task.task_type %}"> - </a>
                 </p>
             </div>
-        {% endfor %}
 
-    {% for task in tasks2 %}
-            <div>
-                <p>
-                    <a href="{% url 'edit-choice-task' id=task.id %}">{{ task.task_name }}</a>
-                    <a href="{% url 'delete-choice-task' id=task.id %}"> - </a>
-                </p>
-            </div>
         {% endfor %}
-
-    {% for task in tasks3 %}
-            <div>
-                <p>
-                    <a href="{% url 'edit-checkin-task' id=task.id %}">{{ task.task_name }}</a>
-                    <a href="{% url 'delete-checkin-task' id=task.id %}"> - </a>
-                </p>
-            </div>
-        {% endfor %}
-
 
     </div>
 

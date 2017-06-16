@@ -15,22 +15,22 @@
     <h2>Задания</h2>
 
     {% for task in quest.tasks_choice.all %}
-        <p><a href="{% url 'view-choice-task' id=task.id q_id=quest.id %}">{{ task }}</a></p>
+        <p><a href="{% url 'view-task' id=task.id q_id=quest.id task_type=task.task_type %}">{{ task }}</a> {% if accepted3.user_answer %} Ответ дан{% endif %}</p>
     {% endfor %}
 
     {% for task in quest.tasks_checkin.all %}
-        <p><a href="{% url 'view-checkin-task' id=task.id q_id=quest.id  %}">{{ task }}</a></p>
+        <p><a href="{% url 'view-task' id=task.id q_id=quest.id task_type=task.task_type %}">{{ task }}</a> {% if accepted2.user_answer %} Ответ дан {% endif %}</p>
     {% endfor %}
 
     {% for task in quest.tasks_image.all %}
-        <p><a href="{% url 'view-image-task' id=task.id q_id=quest.id %}">{{ task }}</a></p>
+        <p><a href="{% url 'view-task' id=task.id q_id=quest.id task_type=task.task_type %}">{{ task }}</a> {% if accepted1.user_answer != "" %} Ответ дан {% if accepted1.status == "2" %}(проверяется){% endif %}{% endif %}</p>
     {% endfor %}
 
 
     <p>Дата начала квеста: <b>{{ quest.start_date }}</b></p>
     <p>Дата окончания квеста: <b>{{ quest.end_date }}</b></p>
 
-
+    <a href="{% url 'finish-quest' q_id=quest.id %}">Завершить</a>
 {% endblock %}
 
 {% block scripts %}
